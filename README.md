@@ -294,6 +294,10 @@ See
 - https://docs.digicert.com/en/certcentral/manage-certificates/dv-certificate-enrollment/domain-control-validation--dcv--methods.html
 
 
+### SNI
+
+We used a SAN certficate and HA proxy can also mamange a SNI folder
+
 ### Raspi can use desktop to go faster
 ---
 
