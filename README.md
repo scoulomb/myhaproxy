@@ -299,5 +299,9 @@ See
 We used a SAN certficate and HA proxy can also mamange a SNI folder
 
 ### Raspi can use desktop to go faster
+
+### We can use HA proxy URL because of NAT loopback at home
+
+https://github.com/scoulomb/home-assistant/blob/main/appendices/DNS.md#nat-loopback
 ---
 
