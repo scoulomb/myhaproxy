@@ -259,7 +259,7 @@ We can check config UI at `http://raspberrypi5:70/`
 ## Notes
 
 - If TLS/NAT not setup we can test host header based routing via `curl --header 'Host: ha.coulombel.net' http://raspberrypi5:443/`
-- Becareful to HA proxy config last line: https://stackoverflow.com/questions/68350378/unable-to-start-haproxy-2-4-missing-lf-on-last-line
+- Be careful to HA proxy config last line: https://stackoverflow.com/questions/68350378/unable-to-start-haproxy-2-4-missing-lf-on-last-line
 
 
 ## Advanced notes [only here to review - remain is CCL]
@@ -283,7 +283,7 @@ Also I will keep hosting server on QNAP, for instance jellyfish recomend atom cp
 Also K8s uses HA proxy to route to service.
 Remmber we can create a load balancer service (NodePort) or use an Ingress which can be a NodePort (https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#ingress-itself-is-a-using-standard-k8s-service-but-it-can-also-bind-port-on-node)
 
-<!-- And link to priv script/ Links- -cloud / listing-use-cases-appendix.md#apigee-microgw -->
+<!-- And link to priv script/ Links- -cloud / listing-use-cases-appendix.md#pre-req + #apigee-microgw -->
 
 ### DCV validation methods
 
