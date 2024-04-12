@@ -280,10 +280,11 @@ Also I will keep hosting server on QNAP, for instance jellyfish recomend atom cp
 
 ### k8s and HA proxy
 
-Also K8s uses HA proxy to route to service.
-Remmber we can create a load balancer service (NodePort) or use an Ingress which can be a NodePort (https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#ingress-itself-is-a-using-standard-k8s-service-but-it-can-also-bind-port-on-node)
+Also K8s uses HA proxy to route to service, see detail at: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#when-using-ingress
 
-<!-- And link to priv script/ Links- -cloud / listing-use-cases-appendix.md#pre-req + #apigee-microgw -->
+Good summary of end to end setup: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#cloud-edgeand-pop
+<!-- was ccl OK and recheck OK -->
+<!-- And link to private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#pre-req and  + proxy office end of doc OK STOP -->
 
 ### DCV validation methods
 
