@@ -299,10 +299,30 @@ See
 
 We used a SAN certficate and HA proxy can also mamange a SNI folder
 
-### Raspi can use desktop to go faster
+### HA proxy routing
 
-### We can use HA proxy URL because of NAT loopback at home
+Can be based on 
+- Host header: https://www.haproxy.com/blog/how-to-map-domain-names-to-backend-server-pools-with-haproxy [ACL, direct map, map based routing]
+- HTTP path: https://www.haproxy.com/blog/path-based-routing-with-haproxy (`path`, `path_beg` or `map file` (-> linked to https://www.haproxy.com/blog/introduction-to-haproxy-maps))
 
-https://github.com/scoulomb/home-assistant/blob/main/appendices/DNS.md#nat-loopback
+Advanced:: we can use map based routing for host header and http path based routing,
+But can it be more customizable. 
+- For path based: it can map beginning, end, subrsring and regex of a path 
+- For host based: it can map a domain.
+
+We can also map a source IP.
+See https://www.haproxy.com/blog/introduction-to-haproxy-maps
+
+Do not confuse with SNI certificate selection and host header based routing, SNI is pure TLS: https://fr.wikipedia.org/wiki/Server_Name_Indication 
+
+See /private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#ingress-usage-or-not
+
+### Raspi 
+
+We can use desktop UI to go faster
+
+### Why We can use HA proxy URL
+
+It is because of NAT loopback at home: https://github.com/scoulomb/home-assistant/blob/main/appendices/DNS.md#nat-loopback
 ---
 
