@@ -264,6 +264,10 @@ We can check config UI at `http://raspberrypi5:70/`
 
 ## Advanced notes [only here to review - remain is CCL]
 
+### Access to music server 
+
+This is described at https://github.com/scoulomb/home-assistant/blob/main/appendices/sound-video/setup-your-own-media-server-and-music-player.md
+
 ### We have seen 3 ways to access internal server from external 
 
 - Direct NAT: https://github.com/scoulomb/home-assistant/blob/main/appendices/DNS.md
@@ -285,6 +289,45 @@ Also K8s uses HA proxy to route to service, see detail at: https://github.com/sc
 Good summary of end to end setup: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#cloud-edgeand-pop
 <!-- was ccl OK and recheck OK -->
 <!-- And link to private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#pre-req and  + proxy office end of doc OK STOP -->
+ Here we use HA proxy which is used by Openshift route. We also have Traefik which is mentionned in  https://www.navidrome.org/docs/usage/security/#reverse-proxy-authentication, and we saw it can be used in k8s, see https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#see-traefik-gui
+
+
+### HA proxy and F5 re-encryption comparison
+
+
+- HA proxy is a kind of load balancer we can threfore also re-encrypt traffic.
+  - As reminder check this representation:  https://github.com/scoulomb/private-ppt-repo/blob/main/README.md#public-tls-certificates 
+  - Note there in diagram
+    - `Client cert if mtls F5 <-> GW` linked to `SSLCACertificateFile` 
+    - `Certificate Authority  to trust (when private CA authority): ca-file` linked to `TLS private cert` https://github.com/scoulomb/misc-notes/blob/master/tls/in-learning-complement/learning-ssl-tld.md#acquire-a-webserver-certificate-using-openssl 
+    - on `F5 client SSL` we could also have `SSLCACert` file as k8s server on the rigth, and with client cert mtls on initial client (at left)
+  - We have the equivlalent here: https://www.haproxy.com/documentation/haproxy-configuration-tutorials/ssl-tls/#tls-between-the-load-balancer-and-servers
+  - And here detail on client certificate: https://www.haproxy.com/documentation/haproxy-configuration-tutorials/authentication/client-certificate-authentication/
+    - Where HA proxy can verify client certificate with `ca-file` (equivalent to `SSLCACert`)
+    - Send certificate to server: `ssl crt` (equivalent to `Client cert if mtls F5 <-> GW`) )
+  - For mTLS see also: https://github.com/scoulomb/misc-notes/blob/master/tls/tls-certificate.md#mutual-auth-mtls (certificate and server certificate are signed, usuallty server certificate on F5/HA proxy is signed by public CA (see in [self](#certificate-generation) and other signed by private CA (as described here: https://www.haproxy.com/documentation/haproxy-configuration-tutorials/authentication/client-certificate-authentication/
+  #create-a-client-certificate. Server certificate signed by private CA are acquired the same way as described in 
+    - https://github.com/scoulomb/misc-notes/blob/master/tls/in-learning-complement/self-signed-certificate-with-custom-ca.md 
+    - And here: https://github.com/scoulomb/misc-notes/blob/master/tls/in-learning-complement/learning-ssl-tld.md#linux-openssl-pki-environment [+] https://github.com/scoulomb/misc-notes/blob/master/tls/in-learning-complement/learning-ssl-tld.md#acquire-a-webserver-certificate-using-openss
+    - Here we signed with private CA,a root CA cert is self-signed but we have also the option to self-sign a certificate
+
+- We could do authent with reverse proxy: https://www.navidrome.org/docs/usage/security/#reverse-proxy-authentication
+See: https://www.haproxy.com/documentation/haproxy-configuration-tutorials/authentication/client-certificate-authentication/
+  - basic
+  - client cert (see bullet above)
+  - oAuth 2 (https://github.com/scoulomb/misc-notes/tree/master/oauth) <!-- stop here -->
+
+<!--
+- This is linked to /Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#cloudification-is-a-pre-req-to-migration
+-->
+
+### HA proxy and F5 source IP preservation
+
+HA proxy can also preserve source IP: https://www.haproxy.com/documentation/haproxy-configuration-tutorials/client-ip-preservation/enable-proxy-protocol/ 
+
+<!--
+- This is linked to /Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#cloudification-is-a-pre-req-to-migration
+-->
 
 ### DCV validation methods
 
@@ -314,6 +357,7 @@ We can also map a source IP.
 See https://www.haproxy.com/blog/introduction-to-haproxy-maps
 
 Do not confuse with SNI certificate selection and host header based routing, SNI is pure TLS: https://fr.wikipedia.org/wiki/Server_Name_Indication 
+<!-- see page high level design elm -->
 
 See /private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#ingress-usage-or-not
 
@@ -323,6 +367,7 @@ We can use desktop UI to go faster
 
 ### Why We can use HA proxy URL
 
-It is because of NAT loopback at home: https://github.com/scoulomb/home-assistant/blob/main/appendices/DNS.md#nat-loopback
----
 
+It is because of NAT loopback at home: https://github.com/scoulomb/home-assistant/blob/main/appendices/DNS.md#nat-loopback
+
+---
