@@ -329,6 +329,44 @@ HA proxy can also preserve source IP: https://www.haproxy.com/documentation/hapr
 - This is linked to /Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#cloudification-is-a-pre-req-to-migration
 -->
 
+### HA proxy and F5 virtual server and Azure LB
+
+- Azure load balancer can support multiple IP: https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-multivip-overview.
+More exactly 600 hundreds: https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits#load-balancer
+When using k8s `serviceType: LoadBalancer`, driver can create a new loadbalancer or app port to load balancer. <!-- See link private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#si-inbound-links-in-pop-and-workload-in-azure-target-slide-8, here we add port to LB which is per farm/macxrophase -->
+
+- F5 has same concepts with virtual server
+
+- F5 load  balancer are not doing routing. F5 virtual server listens on deicated virtual IP:virtual Port and BGP do the routing to F5.
+Though we can have some interaction between router and F5: https://www.rwolfe.io/advertising-healthy-f5-ltm-vips-using-bgp/
+<!-- slide design v2 automatic route on path but for fw from /private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases.md#links-migration-listing-all-use-cases ==> sharepoint -->
+
+- What about my HA proxy?
+  - First HA proxy has the concept of frontend/backend and listen: https://stackoverflow.com/questions/39209917/difference-between-frontend-backend-and-listen-in-haproxy -> http://cbonte.github.io/haproxy-dconv/1.6/configuration.html#4
+    - > A "frontend" section describes a set of listening sockets accepting client connections.
+    - > A "backend" section describes a set of servers to which the proxy will connect to forward incoming connections.
+    - > A "listen" section defines a complete proxy with its frontend and backend parts combined in one section. It is generally useful for TCP-only traffic.
+    - From SO: > A listen has an implicit default_backend of itself
+    - We can see it in action in our [proxy config](./haproxy/haproxy.cfg) for both (listen to HA proxy UI)
+  - Let's look at frontend documentation: https://www.haproxy.com/docuemntation/haproxy-configuration-tutorials/core-concepts/frontends/
+    - Here https://www.haproxy.com/documentation/haproxy-configuration-tutorials/core-concepts/frontends/#use-multiple-frontends-for-different-traffic-types
+      - Here we use 2 front end for 2 differents `IPs:Port` and traffic type
+      ````
+      frontend foo.com
+        mode http
+        bind 192.168.1.5:80
+        default_backend foo_servers
+      frontend db.foo.com
+        mode tcp
+        bind 192.168.1.15:3306
+        default_backend db_servers
+      ````
+      - This the most equivalent to F5 virtual server
+      - HA proxy allows also 1 front end to listen on mutiple IP and port: https://www.haproxy.com/documentation/haproxy-configuration-tutorials/core-concepts/frontends/#listen-on-multiple-ip-addresses-and-ports
+        - When we do `:80`, we listen on all IP adresses targetting the server at this port (equivalent to `0.0.0.0`, and IPv6: https://stackoverflow.com/questions/27480094/ipv6-is-equivalent-to-0-0-0-0-when-listening-for-connections), we can also do port range `bind 192.168.1.5:8080-8090`, and listen on all IPv4+6 `bind [::]:80 v4v6`. 
+      - And our front end [proxy config](./haproxy/haproxy.cfg), we have 2 ports with all interfaces but I have only my provider IP, which is NAT distributed to myhaproxy
+      - See also: https://serverfault.com/questions/310493/haproxy-with-multiple-ip-in-one-server
+
 ### DCV validation methods
 
 We have used Webserver validation method here, bit other ways are possbile (DNS, email)
