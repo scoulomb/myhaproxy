@@ -1,1 +1,1 @@
-cat /etc/letsencrypt/live/ha.coulombel.net/cert.pem /etc/letsencrypt/live/ha.coulombel.net/privkey.pem > mycert.pem
+cat /etc/letsencrypt/live/ha.coulombel.net/fullchain.pem /etc/letsencrypt/live/ha.coulombel.net/privkey.pem > /etc/letsencrypt/live/ha.coulombel.net/mycert.pem
