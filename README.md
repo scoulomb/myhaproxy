@@ -335,7 +335,7 @@ Good summary of end to end setup: https://github.com/scoulomb/myk8s/blob/master/
 - If backend is deployed via Kubernetes we still those 2 options: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#cloud-edgeand-pop. Where when using ingress/openshift route itself can do re-encrypt beween ingress and pod (/private_script/blob/main/Links-mig-auto-cloud/certificate-doc/SSL-certificate-as-a-service-on-Openshift-4.md), passthrough, or edge:https://docs.openshift.com/container-platform/4.11/networking/routes/route-configuration.html
 <!-- -private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#si-inbound-links-in-pop-and-workload-in-azure-target-slide-8 --> 
 <!-- stop here not detailled apigee cert OK independent could do it later -->
-
+<!-- back end to back end call should be done via service inside cluster not via route (extra hop) or worse proxy: real life use-case seen -->
 
 ### Authentification
 
@@ -427,17 +427,28 @@ Note Server certificate signed by CA, idnetify server and used to encrypt.
 
 <!-- basic auth and jwt bearer token validated and tested with commands supplied OK -->
 
-<!--Ama 
-New BE use Microsoft oauth server
-Legacy: 1qquth (robot but so not use if not behind sei), central lp or oauth equivalent
-central lp not for robot, but UI except if exception 
-Optional to complement here
--->
 
 **Will not**
-- Will not explore something not client credentials grant type with Auth0
+- Will not explore something not client credentials grant type with Auth0 (authorization code expects to have a UI on top)
 - Will not try client cert mtls
 - And proxy server (see wiki) in browser different (Amperfy not possible with credentials)
+
+Also note auth0 token validation is done on application side. Some IDP have endpoint to check token: https://community.auth0.com/t/validating-an-access-token/71540
+
+<!--@Real life 
+Use Microsoft oauth server: "Authentication+Mechanism Network+automation" to get token with authorization code and client credentials grant type
+== Question: toke validation (certificate?) how done
+
+Use internal auth server to get token
+1. internal openid (where option to call auth provider instead of token validation, first one done)
+2. central _l _p internal "internal" API used by UI, and  exception to be used from orchestrator 
+3. aauth auth header (but not allowed when no service integration)
+4. or via a workflow exception in 2
+
+== Question: can we use token got in 2, same way if 1, so that only client inpact
+
+Optional to complement here ==question
+-->
 
 ### HA proxy and F5 source IP preservation
 
@@ -493,6 +504,8 @@ See
 - https://support.comodoca.com/articles/Knowledge/Domain-Control-Validation-DCV-Methods
 - https://docs.digicert.com/en/certcentral/manage-certificates/dv-certificate-enrollment/domain-control-validation--dcv--methods.html
 
+
+Here: https://github.com/scoulomb/birthday-counter, server valudation made directly by hosting (as DNS pointing to their public IP) <!-- stop -->
 
 ### SNI
 
