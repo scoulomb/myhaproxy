@@ -434,6 +434,11 @@ central lp not for robot, but UI except if exception
 Optional to complement here
 -->
 
+**Will not**
+- Will not explore something not client credentials grant type with Auth0
+- Will not try client cert mtls
+- And proxy server (see wiki) in browser different (Amperfy not possible with credentials)
+
 ### HA proxy and F5 source IP preservation
 
 HA proxy can also preserve source IP: https://www.haproxy.com/documentation/haproxy-configuration-tutorials/client-ip-preservation/enable-proxy-protocol/ 
