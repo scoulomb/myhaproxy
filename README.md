@@ -335,7 +335,7 @@ Good summary of end to end setup: https://github.com/scoulomb/myk8s/blob/master/
 - If backend is deployed via Kubernetes we still those 2 options: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#cloud-edgeand-pop. Where when using ingress/openshift route itself can do re-encrypt beween ingress and pod (/private_script/blob/main/Links-mig-auto-cloud/certificate-doc/SSL-certificate-as-a-service-on-Openshift-4.md), passthrough, or edge:https://docs.openshift.com/container-platform/4.11/networking/routes/route-configuration.html
 <!-- -private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#si-inbound-links-in-pop-and-workload-in-azure-target-slide-8 --> 
 <!-- stop here not detailled apigee cert OK independent could do it later -->
-<!-- back end to back end call should be done via service inside cluster not via route (extra hop) or worse proxy: real life use-case seen -->
+<!-- back end to back end call should be done via service inside cluster (ip:port) not via route (extra hop) or worse proxy: real life use-case seen - observed a random behavior depending on POD -->
 
 ### Authentification
 
@@ -380,7 +380,10 @@ We are in client authentification/SSL-TLS (client) case/Identify CA (as cert sig
 Note Server certificate signed by CA, idnetify server and used to encrypt.
 
 
-- oAuth 2 : https://www.haproxy.com/documentation/haproxy-configuration-tutorials/authentication/oauth-authorization/ (https://github.com/scoulomb/misc-notes/tree/master/oauth). Here we use client credentials oauth flow. <!-- stop here -->
+- oAuth 2 : https://www.haproxy.com/documentation/haproxy-configuration-tutorials/authentication/oauth-authorization/ (https://github.com/scoulomb/misc-notes/tree/master/oauth). Here we use client credentials oauth flow with an id token. <!-- stop here -->
+So we are in client credential grant type https://github.com/scoulomb/misc-notes/blob/master/oauth/3-oauth2.0-client-credentials.puml, extended with id_token.
+Here we had extended authorization code grant type with id token: https://github.com/scoulomb/misc-notes/blob/master/oauth/99-oauth2.0andOpenID.puml#L3
+
   - Get a JWT with Auth0 
 
   ````
@@ -433,22 +436,33 @@ Note Server certificate signed by CA, idnetify server and used to encrypt.
 - Will not try client cert mtls
 - And proxy server (see wiki) in browser different (Amperfy not possible with credentials)
 
-Also note auth0 token validation is done on application side. Some IDP have endpoint to check token: https://community.auth0.com/t/validating-an-access-token/71540
+
+- Comment on token
+  - Note auth0, access token is also an id_token, not a separate field as in here: https://github.com/scoulomb/misc-notes/blob/master/oauth/99-oauth2.0andOpenID.puml#L43
+  - ID Token validation is done on application side using certificate (signature). Some IDP/OIDC have endpoint to validate id token: https://community.auth0.com/t/validating-an-access-token/71540, https://stackoverflow.com/questions/64758965/okta-introspect-endpoint-always-returns-false
+  - ID token contains user info and permission 
+  - Some OIDC provider also enable to exchange access token with user info / permission: https://github.com/scoulomb/misc-notes/blob/master/oauth/99-oauth2.0andOpenID.puml#L43, see here with Google: https://www.oauth.com/oauth2-servers/signing-in-with-google/verifying-the-user-info/ (does not seem to be case for auth0)
+  - Auth0 is using Google OIDC when login with google account (inception). They get userinfo
+  
 
 <!--@Real life 
 Use Microsoft oauth server: "Authentication+Mechanism Network+automation" to get token with authorization code and client credentials grant type
 == Question: toke validation (certificate?) how done
 
 Use internal auth server to get token
-1. internal openid (where option to call auth provider instead of token validation, first one done)
+1. internal openid a la client credentials grant type (with id token or exchange access token, later is implemented currently) 
 2. central _l _p internal "internal" API used by UI, and  exception to be used from orchestrator 
 3. aauth auth header (but not allowed when no service integration)
 4. or via a workflow exception in 2
+
+See mel: Robotic access to LNK
 
 == Question: can we use token got in 2, same way if 1, so that only client inpact
 
 Optional to complement here ==question
 -->
+
+<!-- pkce not rel to cert -->
 
 ### HA proxy and F5 source IP preservation
 
