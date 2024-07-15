@@ -571,8 +571,17 @@ It is because of NAT loopback at home: https://github.com/scoulomb/home-assistan
 
 ---
 
+## Work from PI5
 
 Note: those file can edited directly from PI 5.
+
+````
+ssh-keygen
+Add key: https://github.com/settings/keys
+git remote rm origin 
+git remote add origin git@github.com:scoulomb/myhaproxy.git
+Remove ssh key from github
+````
 
 ## OPTIONAL Improvements
 
