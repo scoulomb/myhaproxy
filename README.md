@@ -112,7 +112,7 @@ We setup in google damin the 5 A records to my fix IP (here not dynDNS)
 
 
 
-### Certificate generation
+### Certificate generation prep
 
 First we need to gnerate certificate on the Raspberry
 
@@ -139,11 +139,12 @@ scoulomb@raspberrypi5:~ $ which certbot
 /snap/bin/certbot
 ````
 
+### Generate certificate
 
 And finally we will generate our certificate
 
 ````
-sudo /snap/bin/certbot certonly --standalone -d ha.coulombel.net -d nas-mgmt.coulombel.net -d music.coulombel.net -d musik.coulombel.net -d music-ha.coulombel.net -d webserver.coulombel.net 
+sudo /snap/bin/certbot certonly --standalone -d ha.coulombel.net -d nas-mgmt.coulombel.net -d music.coulombel.net -d musik.coulombel.net -d music-ha.coulombel.net -d webserver.coulombel.net -d player.coulombel.net
 ````
 
 
@@ -162,9 +163,10 @@ Given we are using webserver DCV we need NAT rules to go to PI 5 port 80.
 However we are not there yet, for the certificate to be usable by ha proxy we need to merge the cert and private key in a single file
 
 ````
-cat /etc/letsencrypt/live/ha.coulombel.net/cert.pem /etc/letsencrypt/live/ha.coulombel.net/privkey.pem > mycert.pem
+sudo cat /etc/letsencrypt/live/ha.coulombel.net/cert.pem /etc/letsencrypt/live/ha.coulombel.net/privkey.pem > mycert.pem
 ````
 
+or execute `sudo /home/scoulomb/myhaproxy/mergecert.sh`
 
 Where the order has an high importance. See more details at: https://hfiel.github.io/wiki/linux/haproxy_ssl_certificate_concatenation_for_pem.html
 
@@ -175,6 +177,12 @@ We can automate it to be compatible with renwal (cert bot time)
 sudo crontab -e
 # add
 55 23 * * * /home/scoulomb/myhaproxy/mergecert.sh
+````
+
+we need to give permission 
+
+````
+chmod u+x  /home/scoulomb/myhaproxy/mergecert.sh
 ````
 
 **Note mergecert should use the fullchain to work with curl**: https://community.letsencrypt.org/t/why-does-curl-not-trust-letsencrypt/183585/4
@@ -242,7 +250,7 @@ sudo docker run -v ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro -
 ````
 
 
-We cab add `--restart=always` option to restart container at boot time and `-d` for detached mode
+We can add `--restart=always` option to restart container at boot time and `-d` for detached mode
 
 
 ````
@@ -253,10 +261,18 @@ sudo docker rm $(sudo docker ps -a | grep haproxy | awk '{print $1}')
 sudo docker run -v ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro -v /etc/letsencrypt/live/ha.coulombel.net:/certs -p 443:443 -p 70:70 --restart=always -d haproxy
 ````
 
+and have a script [`restart.sh`](./restart.sh)
+
+
+
 When using docker we have additional nat layer (port) - so 3 renat with ghome.
 
 We can check config UI at `http://raspberrypi5:70/`
 
+
+## Cert renwal failing?
+
+If the case re-run command above from [generate certificate](#generate-certificate)
 
 ## Notes
 
@@ -554,3 +570,11 @@ We can use desktop UI to go faster
 It is because of NAT loopback at home: https://github.com/scoulomb/home-assistant/blob/main/appendices/DNS.md#nat-loopback
 
 ---
+
+
+Note: those file can edited directly from PI 5.
+
+## OPTIONAL Improvements
+
+- Cert renewal. See `## Cert renwal failing?` section
+- Understand better `set-uri` and link with, as it is equivalent: https://github.com/open-denon-heos/remote-control/blob/main/apache-setup/heos.conf
