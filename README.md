@@ -302,13 +302,11 @@ Also I will keep hosting server on QNAP, for instance jellyfish recomend atom cp
 
 ### k8s and HA proxy
 
-Also K8s uses HA proxy to route to service, see detail at: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#when-using-ingress
+Also K8s uses HA proxy to route to service, see detail at: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#summary
 
-Good summary of end to end setup: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#cloud-edgeand-pop
-<!-- was ccl OK and recheck OK -->
-<!-- And link to private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#pre-req and  + proxy office end of doc OK STOP -->
- Here we use HA proxy which is used by Openshift route. We also have Traefik which is mentionned in  https://www.navidrome.org/docs/usage/security/#reverse-proxy-authentication, and we saw it can be used in k8s, see https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#see-traefik-gui
 
+<!-- And link to private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix-1-mdw-links #pre-req and  + proxy office end of doc OK STOP -->
+Here we use HA proxy which is used by Openshift route. We also have Traefik which is mentionned in  https://www.navidrome.org/docs/usage/security/#reverse-proxy-authentication, and we saw it can be used in k8s, see https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#see-traefik-gui
 
 ### HA proxy and F5 re-encryption comparison
 
@@ -349,7 +347,7 @@ Good summary of end to end setup: https://github.com/scoulomb/myk8s/blob/master/
     - Between A and B (edge), did not see major speed downgarde
 
 - If backend is deployed via Kubernetes we still those 2 options: https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#cloud-edgeand-pop. Where when using ingress/openshift route itself can do re-encrypt beween ingress and pod (/private_script/blob/main/Links-mig-auto-cloud/certificate-doc/SSL-certificate-as-a-service-on-Openshift-4.md), passthrough, or edge:https://docs.openshift.com/container-platform/4.11/networking/routes/route-configuration.html
-<!-- -private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#si-inbound-links-in-pop-and-workload-in-azure-target-slide-8 --> 
+<!-- -private_script/blob/main/Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix-1-mdw-links-...-slide-8 --> 
 <!-- stop here not detailled apigee cert OK independent could do it later -->
 <!-- back end to back end call should be done via service inside cluster (ip:port) not via route (extra hop) or worse proxy: real life use-case seen - observed a random behavior depending on POD -->
 
@@ -441,7 +439,7 @@ Here we had extended authorization code grant type with id token: https://github
 - Here cert is used to sign token (via private key and signature verified using public key)
 
 <!--
-- This is linked to /Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#cloudification-is-a-pre-req-to-migration
+- This is linked to /Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix-1-mdw-....#cloudification-is-a-pre-req-to-migration
 -->
 
 <!-- basic auth and jwt bearer token validated and tested with commands supplied OK -->
@@ -485,7 +483,7 @@ Optional to complement here ==question
 HA proxy can also preserve source IP: https://www.haproxy.com/documentation/haproxy-configuration-tutorials/client-ip-preservation/enable-proxy-protocol/ 
 
 <!--
-- This is linked to /Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix.md#cloudification-is-a-pre-req-to-migration
+- This is linked to /Links-mig-auto-cloud/listing-use-cases/listing-use-cases-appendix-1-mdw-...#cloudification-is-a-pre-req-to-migration
 -->
 
 ### HA proxy and F5 virtual server and Azure LB
